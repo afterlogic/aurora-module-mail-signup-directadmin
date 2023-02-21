@@ -1,0 +1,42 @@
+{
+	"Disabled": [
+		true,
+		"bool"
+	],
+	"Disabled_Description": [
+		"Setting to true disables the module",
+		"string"
+	],	
+	"DirectAdminURL": [
+		"http://localhost:2222",
+		"string"
+	],
+	"DirectAdminURL_Description": [
+		"Defines main URL of DirectAdmin installation",
+		"string"
+	],
+	"AdminUser": [
+		"",
+		"string"
+	],
+	"AdminUser_Description": [
+		"Username of DirectAdmin administrator account",
+		"string"
+	],
+	"AdminPassword": [
+		"",
+		"string"
+	],
+	"AdminPassword_Description": [
+		"Password of DirectAdmin administrator account",
+		"string"
+	],
+	"UserDefaultQuotaMB": [
+		20,
+		"int"
+	],
+	"UserDefaultQuotaMB_Description": [
+		"Default quota of new email accounts created on DirectAdmin",
+		"string"
+	]
+}

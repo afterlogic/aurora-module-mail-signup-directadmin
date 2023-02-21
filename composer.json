@@ -1,0 +1,14 @@
+{
+	"name": "afterlogic/aurora-module-mail-signup-directadmin",
+	"type": "aurora-module",
+	"require": {
+		"php": ">=7.4.0",
+		"afterlogic/aurora-framework": "~0.10.0"
+	},
+	"autoload": {
+		"classmap": ["/"]
+	},
+	"extra": {
+		"installer-name": "MailSignupDirectAdmin"
+	}
+}
