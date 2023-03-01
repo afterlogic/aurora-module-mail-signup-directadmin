@@ -54,52 +54,46 @@ class Module extends \Aurora\System\Module\AbstractModule
             $iQuota = (int) $this->getConfig('UserDefaultQuotaMB', 20);
 
             $bPrevState = \Aurora\System\Api::skipCheckUserRole(true);
-            $iUserId = \Aurora\Modules\Core\Module::Decorator()->CreateUser(0, $sLogin);
-            $oUser = \Aurora\System\Api::getUserById((int) $iUserId);
-            if ($oUser instanceof \Aurora\Modules\Core\Models\User) {
-                $sDomain = \MailSo\Base\Utils::GetDomainFromEmail($oUser->PublicId);
-                $sUsername = \MailSo\Base\Utils::GetAccountNameFromEmail($oUser->PublicId);
-
-                if (!empty($sDomain)) {
-                    $aResult = array();
+            [$sUsername, $sDomain] = explode("@", $sLogin);
+            if (!empty($sDomain)) {
+                $aResult = array();
+                try {
+                    $mResultDA = $this->oDAApi->CMD_API_POP("create", $sDomain, $sUsername, $sPassword, $sPassword, $iQuota, '');
+                    parse_str(urldecode($mResultDA), $aResult);
+                    \Aurora\System\Api::Log('API call result:\n'.$mResultDA, \Aurora\System\Enums\LogLevel::Full);
+                } catch(\Exception $oException) {
+                    throw new \Aurora\System\Exceptions\ApiException(0, $oException, $oException->getMessage());
+                }
+                if (is_array($aResult) && isset($aResult['error']) && ($aResult['error']!="1")) {
+                    $iUserId = \Aurora\Modules\Core\Module::Decorator()->CreateUser(0, $sLogin);
+                    $oUser = \Aurora\System\Api::getUserById((int) $iUserId);
                     try {
-                        $mResultDA = $this->oDAApi->CMD_API_POP("create", $sDomain, $sUsername, $sPassword, $sPassword, $iQuota, '');
-                        parse_str(urldecode($mResultDA), $aResult);
-                        \Aurora\System\Api::Log('API call result:\n'.$mResultDA, \Aurora\System\Enums\LogLevel::Full);
-                    } catch(\Exception $oException) {
-                        throw new \Aurora\System\Exceptions\ApiException(0, $oException, $oException->getMessage());
-                    }
-                    if (is_array($aResult) && isset($aResult['error']) && ($aResult['error']!="1")) {
-                        try {
-                            $oAccount = \Aurora\Modules\Mail\Module::Decorator()->CreateAccount($oUser->Id, $sFriendlyName, $sLogin, $sLogin, $sPassword);
-                            if ($oAccount instanceof \Aurora\Modules\Mail\Models\MailAccount) {
-                                $iTime = $bSignMe ? 0 : time();
-                                $sAuthToken = \Aurora\System\Api::UserSession()->Set(
-                                    [
-                                        'token'		=> 'auth',
-                                        'sign-me'		=> $bSignMe,
-                                        'id'			=> $oAccount->IdUser,
-                                        'account'		=> $oAccount->Id,
-                                        'account_type'	=> $oAccount->getName()
-                                    ],
-                                    $iTime
-                                );
-                                $mResult = ['AuthToken' => $sAuthToken];
-                            }
-                        } catch (\Exception $oException) {
-                            if ($oException instanceof \Aurora\Modules\Mail\Exceptions\Exception &&
-                                $oException->getCode() === \Aurora\Modules\Mail\Enums\ErrorCodes::CannotLoginCredentialsIncorrect) {
-                                \Aurora\Modules\Core\Module::Decorator()->DeleteUser($oUser->Id);
-                            }
-                            throw $oException;
+                        $oAccount = \Aurora\Modules\Mail\Module::Decorator()->CreateAccount($oUser->Id, $sFriendlyName, $sLogin, $sLogin, $sPassword);
+                        if ($oAccount instanceof \Aurora\Modules\Mail\Models\MailAccount) {
+                            $iTime = $bSignMe ? 0 : time();
+                            $sAuthToken = \Aurora\System\Api::UserSession()->Set(
+                                [
+                                    'token'		=> 'auth',
+                                    'sign-me'		=> $bSignMe,
+                                    'id'			=> $oAccount->IdUser,
+                                    'account'		=> $oAccount->Id,
+                                    'account_type'	=> $oAccount->getName()
+                                ],
+                                $iTime
+                            );
+                            $mResult = ['AuthToken' => $sAuthToken];
                         }
-                    } elseif (is_array($aResult) && isset($aResult['details'])) {
-                        //If Account wasn't created - delete user
-                        $bPrevState = \Aurora\System\Api::skipCheckUserRole(true);
-                        \Aurora\Modules\Core\Module::Decorator()->DeleteUser($oUser->Id);
-                        \Aurora\System\Api::skipCheckUserRole($bPrevState);
-                        throw new \Aurora\System\Exceptions\ApiException(0, null, trim(str_replace("<br>", "", $aResult['details'])));
+                    } catch (\Exception $oException) {
+                        if ($oException instanceof \Aurora\Modules\Mail\Exceptions\Exception &&
+                            $oException->getCode() === \Aurora\Modules\Mail\Enums\ErrorCodes::CannotLoginCredentialsIncorrect) {
+                            \Aurora\Modules\Core\Module::Decorator()->DeleteUser($oUser->Id);
+                        }
+                        throw $oException;
                     }
+                } elseif (is_array($aResult) && isset($aResult['details'])) {
+                    $bPrevState = \Aurora\System\Api::skipCheckUserRole(true);
+                    \Aurora\System\Api::skipCheckUserRole($bPrevState);
+                    throw new \Aurora\System\Exceptions\ApiException(0, null, trim(str_replace("<br>", "", $aResult['details'])));
                 }
             }
             \Aurora\System\Api::skipCheckUserRole($bPrevState);
