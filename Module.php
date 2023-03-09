@@ -6,7 +6,7 @@
  * For full statements of the licenses see LICENSE-AFTERLOGIC and LICENSE-AGPL3 files.
  */
 
-namespace Aurora\Modules\MailSignupDirectAdmin;
+namespace Aurora\Modules\MailSignupDirectadmin;
 
 /**
  * Allows users to create new email accounts for themselves on DirectAdmin.

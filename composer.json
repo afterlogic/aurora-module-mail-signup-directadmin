@@ -9,6 +9,6 @@
 		"classmap": ["/"]
 	},
 	"extra": {
-		"installer-name": "MailSignupDirectAdmin"
+		"installer-name": "MailSignupDirectadmin"
 	}
 }
