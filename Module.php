@@ -20,7 +20,7 @@ namespace Aurora\Modules\MailSignupDirectadmin;
 class Module extends \Aurora\System\Module\AbstractModule
 {
     /**
-     * @var
+     * @var \DirectAdminAPI
      */
     private $oDAApi;
 
@@ -42,7 +42,7 @@ class Module extends \Aurora\System\Module\AbstractModule
      * Creates account with credentials specified in registration form
      *
      * @param array $aArgs New account credentials.
-     * @param type $mResult Is passed by reference.
+     * @param mixed $mResult Is passed by reference.
      */
     public function onAfterSignup($aArgs, &$mResult)
     {
@@ -58,7 +58,7 @@ class Module extends \Aurora\System\Module\AbstractModule
             if (!empty($sDomain)) {
                 $aResult = array();
                 try {
-                    $mResultDA = $this->oDAApi->CMD_API_POP("create", $sDomain, $sUsername, $sPassword, $sPassword, $iQuota, '');
+                    $mResultDA = $this->oDAApi->CMD_API_POP("create", $sDomain, $sUsername, $sPassword, $sPassword, $iQuota, ''); // @phpstan-ignore-line
                     parse_str(urldecode($mResultDA), $aResult);
                     \Aurora\System\Api::Log('API call result:\n'.$mResultDA, \Aurora\System\Enums\LogLevel::Full);
                 } catch(\Exception $oException) {

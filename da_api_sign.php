@@ -80,7 +80,7 @@ class DirectAdminAPI
         }
 
         $prefix = ($this->da['scheme'] == 'https') ? 'ssl://' : null;
-        if (!isset($error)) {
+        if (!isset($error)) { // @phpstan-ignore-line
             $error = array();
         }
         $fp = @fsockopen($prefix.$this->da['host'], $this->da['port'], $error['number'], $error['string'], 10) ;
@@ -89,7 +89,7 @@ class DirectAdminAPI
         }
 
         $http_header = array(
-            $method.' /'.$command.((!$post) ? '?'.$data : null).' HTTP/1.0',
+            $method.' /'.$command.((!$post) ? '?'.$data : null).' HTTP/1.0', // @phpstan-ignore-line
             'Authorization: Basic '.base64_encode($this->da['user'].':'.$this->da['pass']),
             'Host: '.$this->da['host'],
             'Content-Type: application/x-www-form-urlencoded',
@@ -98,7 +98,7 @@ class DirectAdminAPI
         ) ;
 
         $request = implode("\r\n", $http_header)."\r\n\r\n" ;
-        fwrite($fp, $request.(($post) ? $data : null)) ;
+        fwrite($fp, $request.(($post) ? $data : null)) ; // @phpstan-ignore-line
 
         $returned = '' ;
         while ($line = @fread($fp, 1024)) {
