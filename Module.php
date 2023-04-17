@@ -20,7 +20,7 @@ namespace Aurora\Modules\MailSignupDirectadmin;
 class Module extends \Aurora\System\Module\AbstractModule
 {
     /**
-     * @var \DirectAdminAPI
+     * @var \DirectAdminSignAPI
      */
     private $oDAApi;
 
@@ -35,7 +35,7 @@ class Module extends \Aurora\System\Module\AbstractModule
         $sDaAdminPassword = $this->getConfig('AdminPassword', '');
         $iPos = strpos($sDaURL, '://');
         $sDaFullURL = substr($sDaURL, 0, $iPos+3).$sDaAdminUser.':'.$sDaAdminPassword.'@'.substr($sDaURL, $iPos+3);
-        $this->oDAApi = new \DirectAdminAPI($sDaFullURL);
+        $this->oDAApi = new \DirectAdminSignAPI($sDaFullURL);
     }
 
     /**

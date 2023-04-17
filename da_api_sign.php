@@ -1,6 +1,6 @@
 <?php
 
-class DirectAdminAPI
+class DirectAdminSignAPI
 {
     private $da ;
     private $arg_names = array(
