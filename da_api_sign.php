@@ -1,5 +1,7 @@
 <?php
-
+/**
+* @method mixed CMD_API_POP(string $action, string $domain, string $user, string $passwd, string $passwd2, int $quota, string $limit)
+*/
 class DirectAdminSignAPI
 {
     private $da ;
@@ -69,6 +71,7 @@ class DirectAdminSignAPI
         }
 
         $content_length = 0 ;
+        $data = '';
         if (is_array($argument['data']) && count($argument['data'])) {
             $pair = '' ;
             foreach ($argument['data'] as $index=>$value) {
@@ -80,16 +83,14 @@ class DirectAdminSignAPI
         }
 
         $prefix = ($this->da['scheme'] == 'https') ? 'ssl://' : null;
-        if (!isset($error)) { // @phpstan-ignore-line
-            $error = array();
-        }
+        $error = array();
         $fp = @fsockopen($prefix.$this->da['host'], $this->da['port'], $error['number'], $error['string'], 10) ;
         if (! $fp) {
             return null ;
         }
 
         $http_header = array(
-            $method.' /'.$command.((!$post) ? '?'.$data : null).' HTTP/1.0', // @phpstan-ignore-line
+            $method.' /'.$command.((!$post) ? '?'.$data : '').' HTTP/1.0',
             'Authorization: Basic '.base64_encode($this->da['user'].':'.$this->da['pass']),
             'Host: '.$this->da['host'],
             'Content-Type: application/x-www-form-urlencoded',
@@ -98,7 +99,7 @@ class DirectAdminSignAPI
         ) ;
 
         $request = implode("\r\n", $http_header)."\r\n\r\n" ;
-        fwrite($fp, $request.(($post) ? $data : null)) ; // @phpstan-ignore-line
+        fwrite($fp, $request.(($post) ? $data : '')) ;
 
         $returned = '' ;
         while ($line = @fread($fp, 1024)) {

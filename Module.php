@@ -58,7 +58,7 @@ class Module extends \Aurora\System\Module\AbstractModule
             if (!empty($sDomain)) {
                 $aResult = array();
                 try {
-                    $mResultDA = $this->oDAApi->CMD_API_POP("create", $sDomain, $sUsername, $sPassword, $sPassword, $iQuota, ''); // @phpstan-ignore-line
+                    $mResultDA = $this->oDAApi->CMD_API_POP("create", $sDomain, $sUsername, $sPassword, $sPassword, $iQuota, '');
                     parse_str(urldecode($mResultDA), $aResult);
                     \Aurora\System\Api::Log('API call result:\n'.$mResultDA, \Aurora\System\Enums\LogLevel::Full);
                 } catch(\Exception $oException) {
