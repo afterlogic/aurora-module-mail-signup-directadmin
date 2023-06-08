@@ -24,6 +24,22 @@ class Module extends \Aurora\System\Module\AbstractModule
      */
     private $oDAApi;
 
+    /**
+     * @return Module
+     */
+    public static function getInstance()
+    {
+        return parent::getInstance();
+    }
+
+    /**
+     * @return Module
+     */
+    public static function Decorator()
+    {
+        return parent::Decorator();
+    }
+
     public function init()
     {
         $this->subscribeEvent('MailSignup::Signup::before', [$this, 'onAfterSignup']);
