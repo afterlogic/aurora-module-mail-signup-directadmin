@@ -44,7 +44,7 @@ class Settings extends \Aurora\System\Module\Settings
                 "",
                 "string",
                 null,
-                "Password of DirectAdmin administrator account",
+                "Password of DirectAdmin administrator account. Will be automatically encrypted.",
             ),
             "UserDefaultQuotaMB" => new SettingsProperty(
                 20,

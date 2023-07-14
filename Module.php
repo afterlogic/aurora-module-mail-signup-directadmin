@@ -46,9 +46,15 @@ class Module extends \Aurora\System\Module\AbstractModule
 
         require_once __DIR__.'/da_api_sign.php';
 
-        $sDaURL = $this->getConfig('DirectAdminURL', 'http://localhost:2222');
-        $sDaAdminUser = $this->getConfig('AdminUser', '');
-        $sDaAdminPassword = $this->getConfig('AdminPassword', '');
+        $sDaURL = $this->oModuleSettings->DirectAdminURL;
+        $sDaAdminUser = $this->oModuleSettings->AdminUser;
+        $sDaAdminPassword = $this->oModuleSettings->AdminPassword;
+        if ($sDaAdminPassword && !\Aurora\System\Utils::IsEncryptedValue($sDaAdminPassword)) {
+            $this->setConfig('AdminPassword', \Aurora\System\Utils::EncryptValue($sDaAdminPassword));
+            $this->saveModuleConfig();
+        } else {
+            $sDaAdminPassword = \Aurora\System\Utils::DecryptValue($this->oModuleSettings->AdminPassword);
+        }
         $iPos = strpos($sDaURL, '://');
         $sDaFullURL = substr($sDaURL, 0, $iPos+3).$sDaAdminUser.':'.$sDaAdminPassword.'@'.substr($sDaURL, $iPos+3);
         $this->oDAApi = new \DirectAdminSignAPI($sDaFullURL);
@@ -67,7 +73,7 @@ class Module extends \Aurora\System\Module\AbstractModule
             $sPassword = trim($aArgs['Password']);
             $sFriendlyName = isset($aArgs['Name']) ? trim($aArgs['Name']) : '';
             $bSignMe = isset($aArgs['SignMe']) ? (bool) $aArgs['SignMe'] : false;
-            $iQuota = (int) $this->getConfig('UserDefaultQuotaMB', 20);
+            $iQuota = (int) $this->oModuleSettings->UserDefaultQuotaMB;
 
             $bPrevState = \Aurora\System\Api::skipCheckUserRole(true);
             [$sUsername, $sDomain] = explode("@", $sLogin);
