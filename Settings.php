@@ -40,7 +40,7 @@ class Settings extends \Aurora\System\Module\Settings
                 null,
                 "Username of DirectAdmin administrator account",
             ),
-            "AdminPass" => new SettingsProperty(
+            "AdminPassword" => new SettingsProperty(
                 "",
                 "string",
                 null,
