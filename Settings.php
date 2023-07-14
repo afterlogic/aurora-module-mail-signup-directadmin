@@ -13,7 +13,7 @@ use Aurora\System\SettingsProperty;
  * @property bool $Disabled
  * @property string $DirectAdminURL
  * @property string $AdminUser
- * @property string $AdminPass
+ * @property string $AdminPassword
  * @property int $UserDefaultQuotaMB
  */
 
