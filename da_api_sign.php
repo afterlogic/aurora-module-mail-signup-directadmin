@@ -38,11 +38,11 @@ class DirectAdminSignAPI
         $names = &$this->arg_names[ $name ] ;
 
         if (count($names) != count($arguments)) {
-            throw new Exception('Invalid arguments of DirectAdmin command '.$name) ;
+            throw new Exception('Invalid arguments of DirectAdmin command ' . $name) ;
         }
 
         $transformed = array() ;
-        foreach ($names as $index=>$value) {
+        foreach ($names as $index => $value) {
             $transformed[$value] = $arguments[$index] ;
         }
 
@@ -74,8 +74,8 @@ class DirectAdminSignAPI
         $data = '';
         if (is_array($argument['data']) && count($argument['data'])) {
             $pair = '' ;
-            foreach ($argument['data'] as $index=>$value) {
-                $pair .= $index.'='.urlencode($value).'&' ;
+            foreach ($argument['data'] as $index => $value) {
+                $pair .= $index . '=' . urlencode($value) . '&' ;
             }
 
             $data = rtrim($pair, '&') ;
@@ -84,22 +84,22 @@ class DirectAdminSignAPI
 
         $prefix = ($this->da['scheme'] == 'https') ? 'ssl://' : null;
         $error = array();
-        $fp = @fsockopen($prefix.$this->da['host'], $this->da['port'], $error['number'], $error['string'], 10) ;
+        $fp = @fsockopen($prefix . $this->da['host'], $this->da['port'], $error['number'], $error['string'], 10) ;
         if (! $fp) {
             return null ;
         }
 
         $http_header = array(
-            $method.' /'.$command.((!$post) ? '?'.$data : '').' HTTP/1.0',
-            'Authorization: Basic '.base64_encode($this->da['user'].':'.$this->da['pass']),
-            'Host: '.$this->da['host'],
+            $method . ' /' . $command . ((!$post) ? '?' . $data : '') . ' HTTP/1.0',
+            'Authorization: Basic ' . base64_encode($this->da['user'] . ':' . $this->da['pass']),
+            'Host: ' . $this->da['host'],
             'Content-Type: application/x-www-form-urlencoded',
-            'Content-Length: '.$content_length,
+            'Content-Length: ' . $content_length,
             'Connection: close'
         ) ;
 
-        $request = implode("\r\n", $http_header)."\r\n\r\n" ;
-        fwrite($fp, $request.(($post) ? $data : '')) ;
+        $request = implode("\r\n", $http_header) . "\r\n\r\n" ;
+        fwrite($fp, $request . (($post) ? $data : '')) ;
 
         $returned = '' ;
         while ($line = @fread($fp, 1024)) {

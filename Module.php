@@ -16,7 +16,7 @@ namespace Aurora\Modules\MailSignupDirectadmin;
  * @copyright Copyright (c) 2023, Afterlogic Corp.
  *
  * @property Settings $oModuleSettings
- * 
+ *
  * @package Modules
  */
 class Module extends \Aurora\System\Module\AbstractModule
@@ -46,7 +46,7 @@ class Module extends \Aurora\System\Module\AbstractModule
     {
         $this->subscribeEvent('MailSignup::Signup::before', [$this, 'onAfterSignup']);
 
-        require_once __DIR__.'/da_api_sign.php';
+        require_once __DIR__ . '/da_api_sign.php';
 
         $sDaURL = $this->oModuleSettings->DirectAdminURL;
         $sDaAdminUser = $this->oModuleSettings->AdminUser;
@@ -58,7 +58,7 @@ class Module extends \Aurora\System\Module\AbstractModule
             $sDaAdminPassword = \Aurora\System\Utils::DecryptValue($this->oModuleSettings->AdminPassword);
         }
         $iPos = strpos($sDaURL, '://');
-        $sDaFullURL = substr($sDaURL, 0, $iPos+3).$sDaAdminUser.':'.$sDaAdminPassword.'@'.substr($sDaURL, $iPos+3);
+        $sDaFullURL = substr($sDaURL, 0, $iPos + 3) . $sDaAdminUser . ':' . $sDaAdminPassword . '@' . substr($sDaURL, $iPos + 3);
         $this->oDAApi = new \DirectAdminSignAPI($sDaFullURL);
     }
 
@@ -84,11 +84,11 @@ class Module extends \Aurora\System\Module\AbstractModule
                 try {
                     $mResultDA = $this->oDAApi->CMD_API_POP("create", $sDomain, $sUsername, $sPassword, $sPassword, $iQuota, '');
                     parse_str(urldecode($mResultDA), $aResult);
-                    \Aurora\System\Api::Log('API call result:\n'.$mResultDA, \Aurora\System\Enums\LogLevel::Full);
+                    \Aurora\System\Api::Log('API call result:\n' . $mResultDA, \Aurora\System\Enums\LogLevel::Full);
                 } catch(\Exception $oException) {
                     throw new \Aurora\System\Exceptions\ApiException(0, $oException, $oException->getMessage());
                 }
-                if (is_array($aResult) && isset($aResult['error']) && ($aResult['error']!="1")) {
+                if (is_array($aResult) && isset($aResult['error']) && ($aResult['error'] != "1")) {
                     $iUserId = \Aurora\Modules\Core\Module::Decorator()->CreateUser(0, $sLogin);
                     $oUser = \Aurora\System\Api::getUserById((int) $iUserId);
                     try {
